@@ -15,6 +15,7 @@ app.launch(server_name="0.0.0.0", server_port=7860, share=False, prevent_thread_
 print("App is running... Press Ctrl+C to stop.")
 try:
     while True:
-        time.sleep(60)
+        time.sleep(600)
 except KeyboardInterrupt:
     print("Shutting down app...")
+

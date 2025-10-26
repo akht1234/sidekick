@@ -1,42 +1,15 @@
-name: Deploy Gradio App
+import gradio as gr
+from pyngrok import ngrok
+from app import setup  # Your Gradio app function
 
-on:
-  push:
-    branches:
-      - main
+# Optional: read API keys from environment
+import os
+os.environ.get("SERPER_API_KEY")  # example usage
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# Set up public tunnel
+public_url = ngrok.connect(7860)
+print(f"Gradio public URL: {public_url}")
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.11
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        python -m playwright install 
-
-    - name: Run Gradio with ngrok
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
-        PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
-        LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-        LANGCHAIN_TRACING_V2: ${{ secrets.LANGCHAIN_TRACING_V2 }}
-        LANGCHAIN_ENDPOINT: ${{ secrets.LANCHAIN_ENDPOINT }}
-        LANGCHAIN_PROJECT: ${{ secrets.LANGCHAIN_PROJECT }}
-      run: |
-        pip install pyngrok
-        python run_gradio_ngrok.py
+# Launch Gradio app
+app = setup()  # replace with your Gradio app function
+app.launch(server_name="0.0.0.0", server_port=7860)
